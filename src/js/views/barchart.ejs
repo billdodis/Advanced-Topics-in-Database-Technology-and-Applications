@@ -1,0 +1,207 @@
+<html>
+    <head>
+        <title>Bar Chart</title>
+    </head>
+    <style>
+        input[type=submit] {
+          width: 100%;
+          background-color: #000000;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+    </style>
+    <body>
+        <h1 id="head">tsime</h1>
+        <div id="my_dataviz" ></div>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <form action="/barchart" method="POST">
+            <input class="subbutton" type="submit"value="Return to main page">
+        <script>var datarray = "<%= locals.x %>";</script>
+        <script>var strarray = "<%= locals.strings %>";</script>
+        <script>var fyr = "<%= locals.fyeaar %>";
+        var syr = "<%= locals.syeaar %>";
+        var shyr = "<%= locals.showyeaar %>";</script>
+        <script>
+            //console.log('x',x);
+            //console.log('type',typeof x);
+            x = datarray.split(',');
+            //console.log('syr', syr);
+            //console.log('fyr', fyr);
+            //console.log('showyr', shyr);
+            //var arraylen = x[0]*2;
+            var data=[];
+            var maxx = 0;
+            var strarray = strarray.split(',');
+                for(var i=0;i<strarray.length; i++){
+                    strarray[i] = strarray[i].replace('&#34;', '');
+                    strarray[i] = strarray[i].replace('&#34;', '');
+                }
+                for(var i=0;i<strarray.length; i++){
+                    if(strarray[i]==" --"){
+                        var tsime = i;
+                        strarray.splice(i, 1);
+                        var cutercounter = 0;
+                        var kappa = i + 1;
+                        for(var yy=1;yy<x.length;yy++){
+                            x.splice(kappa,1)
+                            kappa = kappa +2;
+                        }
+                    }
+                    if (tsime == 0){
+                        i = strarray.length;
+                    }
+                }
+                for(var i=0;i<strarray.length; i++){
+                    if(strarray[i]==" --"){
+                        strarray.splice(i, 1);
+                        var cutercounter = 0;
+                        var kappa = i + 1;
+                        for(var yy=1;yy<x.length;yy++){
+                            x.splice(kappa,1)
+                            kappa = kappa +1;
+                        }
+                    }
+                }
+            document.getElementById("head").innerHTML = 'Bar Chart of '+strarray[strarray.length -1]+'.';
+            //console.log('strarray',strarray);
+            var comparisons = strarray.length - 1;
+            //console.log('comp',comparisons);
+            fyr = parseInt(fyr);
+            for(var i =1; i<x.length;i=i+comparisons){
+                if(comparisons == 1){
+                    let y = {"year":fyr,"a":parseFloat(x[i])}
+                    fyr = fyr+1;
+                    data.push(y);
+                }
+                else if(comparisons == 2){
+                    let y = {"year":fyr,"a":parseFloat(x[i]),"b":parseFloat(x[i+1])}
+                    fyr = fyr+1;
+                    data.push(y);
+                }
+                else{
+                    let y = {"year":fyr,"a":parseFloat(x[i]),"b":parseFloat(x[i+1]),"c": parseFloat(x[i+2])}
+                    fyr = fyr+1;
+                    data.push(y);
+                }
+                for(var xxx=i;xxx<i+comparisons;xxx++){
+                    if (parseFloat(x[xxx])>maxx){
+                        maxx = parseFloat(x[xxx]);
+                    }
+                }
+            }
+            if(comparisons == 1){
+                columns = ["year","a"];
+                var colors = ['#e41a1c'];
+            }
+            else if(comparisons == 2){
+                columns = ["year","a","b"];
+                var colors = ['#e41a1c','#377eb8'];
+            }
+            else{
+                columns = ["year","a","b","c"];
+                var colors = ['#e41a1c','#377eb8','#4daf4a'];
+            }
+            //console.log('x',x);
+            //console.log('data',data);
+            var margin = {top: 10, right: 30, bottom: 20, left: 50},
+                        width = 900 - margin.left - margin.right,
+                        height = 600 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+            var svg = d3.select("#my_dataviz")
+            .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+
+            // Parse the Data
+            // List of subgroups = header of the csv files = soil condition here
+            var subgroups = columns.slice(1)
+
+            // List of groups = species here = value of the first column called group -> I show them on the X axis
+            var yearss = d3.map(data, function(d){return(d.year)}).keys()
+            //console.log('years',yearss);
+            // Add X axis
+            var x = d3.scaleBand()
+                .domain(yearss)
+                .range([0, width])
+                .padding([0.2])
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x).tickSize(2.5));
+            // Add Y axis
+            var y = d3.scaleLinear()
+                .domain([0, maxx])
+                .range([ height, 0 ]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Another scale for subgroup position?
+            var xSubgroup = d3.scaleBand()
+                .domain(subgroups)
+                .range([0, x.bandwidth()])
+                .padding([0.05])
+
+            // color palette = one color per subgroup
+            var color = d3.scaleOrdinal()
+                .domain(subgroups)
+                .range(colors)
+            // Show the bars
+            svg.append("g")
+                .selectAll("g")
+                // Enter in data = loop group per group
+                .data(data)
+                .enter()
+                .append("g")
+                .attr("transform", function(d) { return "translate(" + x(d.year) + ",0)"; })
+                .selectAll("rect")
+                .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
+                .enter().append("rect")
+                .attr("x", function(d) { return xSubgroup(d.key); })
+                .attr("y", function(d) { return y(d.value); })
+                .attr("width", xSubgroup.bandwidth())
+                .attr("height", function(d) { return height - y(d.value); })
+                .attr("fill", function(d) { return color(d.key); });
+                svg.append("text")
+                    .attr("class", "x label")
+                    .attr("text-anchor", "end")
+                    .attr("x", width+31)
+                    .attr("y", height +20)
+                    .text("Years");
+
+                svg.append("text")
+                    .attr("class", "y label")
+                    .attr("text-anchor", "end")
+                    .attr("x", 2)
+                    .attr("y", -50)
+                    .attr("dy", ".75em")
+                    .attr("transform", "rotate(-90)")
+                    .text("Values");
+                if(comparisons == 1){
+                    svg.append("circle").attr("cx",width/2 +150).attr("cy",0).attr("r", 4).style("fill", "#e41a1c")
+                    svg.append("text").attr("x", width/2 +160).attr("y", 0).text(strarray[0]).style("font-size", "13px").attr("alignment-baseline","middle")
+                }
+                else if(comparisons == 2){
+                    svg.append("circle").attr("cx",width/2 +150).attr("cy",0).attr("r", 4).style("fill", "#e41a1c")
+                    svg.append("text").attr("x", width/2 +160).attr("y", 0).text(strarray[0]).style("font-size", "13px").attr("alignment-baseline","middle")
+                    svg.append("circle").attr("cx",width/2 +150).attr("cy",30).attr("r", 4).style("fill", "#377eb8")
+                    svg.append("text").attr("x", width/2 +160).attr("y", 30).text(strarray[1]).style("font-size", "13px").attr("alignment-baseline","middle")
+                }
+                else{
+                    svg.append("circle").attr("cx",width/2 +150).attr("cy",0).attr("r", 4).style("fill", "#e41a1c")
+                    svg.append("text").attr("x", width/2 +160).attr("y", 0).text(strarray[0]).style("font-size", "13px").attr("alignment-baseline","middle")
+                    svg.append("circle").attr("cx",width/2 +150).attr("cy",30).attr("r", 4).style("fill", "#377eb8")
+                    svg.append("text").attr("x", width/2 +160).attr("y", 30).text(strarray[1]).style("font-size", "13px").attr("alignment-baseline","middle")
+                    svg.append("circle").attr("cx",width/2 +150).attr("cy",60).attr("r", 4).style("fill", "#4daf4a")
+                    svg.append("text").attr("x", width/2 +160).attr("y", 60).text(strarray[2]).style("font-size", "13px").attr("alignment-baseline","middle")
+                }
+                    
+        </script>
+    </body>
+</html>

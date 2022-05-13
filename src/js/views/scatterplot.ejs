@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <title>Scatter Plot</title>
+    </head>
+    <style>
+        input[type=submit] {
+          width: 100%;
+          background-color: #000000;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+    </style>
+    <body>
+        <h1 id="head">tsime</h1>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <div id="mydataviz"></div>
+        <form action="/scatterplot" method="POST">
+            <input class="subbutton" type="submit"value="Return to main page">
+        <script>
+        var counter = "<%= locals.counter %>";
+        var z = "<%= locals.x %>";</script>
+        <script>var strarray = "<%= locals.strings %>";</script>
+        <script type = "text/javascript">
+            strarray = strarray.split(',');
+            //console.log('strarray:',strarray);
+            for(var i=0;i<strarray.length; i++){
+                strarray[i] = strarray[i].replace('&#34;', '');
+                strarray[i] = strarray[i].replace('&#34;', '');
+            }
+            document.getElementById("head").innerHTML = 'Corellation of'+strarray[0]+' and '+strarray[1]+' in '+strarray[2]+'.';
+        </script>
+        <script>
+            //console.log('x',x);
+            //console.log('type',typeof x);
+            x = z.split(',');
+            //console.log(x);
+            //var arraylen = x[0]*2;
+            var data=[];
+            for(var i =1; i<x.length;i=i+2){
+                //console.log('x[i]',x[i]);
+                let y = {"a":parseFloat(x[i]),"b":parseFloat(x[i+1])}
+                data.push(y);
+            }
+            //console.log(data);
+            var width = 900, height = 500, spacing = 120;
+            //console.log('x',x);
+            var svg = d3.select("#mydataviz").append("svg")
+                        .attr("width", width).attr("height",height)
+                        .style("background", "white")
+                        .style('font-family', 'Helvetica')
+                        .style('font-size', 12)
+                        .text('Dependant')
+                        .append("g")
+                        .attr("transform", "translate(" + spacing/2 + "," + spacing/2 + ")");
+            var xScale = d3.scaleLinear()
+                            .domain([d3.min(data, function(d){return d.a;}), d3.max(data, function(d){return d.a;})])
+                            .range([0, width-spacing]);
+            var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(data, function(d){return d.b;})])
+                            .range([height-spacing, 0]);
+            var xAxis = d3.axisBottom(xScale);
+            var yAxis = d3.axisLeft(yScale);
+            svg.append('text')
+                .attr('x', width/2)
+                .attr('y', height/2 -275)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'Helvetica')
+                .style('font-size', 20)
+                .text('Scatter Plot');
+        
+        // X label
+        svg.append('text')
+        .attr('x', width/2)
+        .attr('y', height/2 + 165)
+        .attr('text-anchor', 'middle')
+        .style('font-family', 'Arial')
+        .style('font-size', 14)
+        .text(strarray[0]);
+        
+        // Y label
+        svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(-49,' + (height/2 - 75) + ')rotate(-90)')
+            .style('font-family', 'Arial')
+            .style('font-size', 14)
+            .text(strarray[1]);
+            svg.append("g").attr("transform", "translate(0," + (height-spacing) +")").call(xAxis);
+            svg.append("g").call(yAxis);
+            var dots = svg.append("g").selectAll("dot").data(data);
+            dots.enter().append("circle")
+                        .attr("cx", function(d){return xScale(d.a);})
+                        .attr("cy", function(d){return yScale(d.b);})
+                        .attr("r", 3)
+                        .style("fill", "purple");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Timeline Data</title>
+    </head>
+
+    <style>
+        body {
+          font-family: Arial;
+        }
+        
+        input[type=text], select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: block;
+          border: 1px solid rgb(95, 36, 36);
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+          width: 100%;
+          background-color: #000000;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+          background-color: #424242;
+        }
+        
+        div.container {
+          border-radius: 5px;
+          background-color: #a9a9a9;
+          padding: 20px;
+        }
+        .tab {
+            display: inline-block;
+            margin-left: 1350px;
+        }
+        </style>
+    <body>
+
+        <h3>Timeline Data Selection</h3>
+        
+        <div class="container">
+
+            <form action="/timelineindex" method="POST">
+                <label for="fcountry">First Country</label>
+                <select id="fcountry" name="fcountry"></select>
+                <label for="scountry">Second Country</label>
+                <select id="scountry" name="scountry"></select>
+                <label for="comp">First Comparison</label>
+                <select id="comp" name="comp"></select>
+                <label for="scomp">Second Comparison</label>
+                <select id="scomp" name="scomp"></select>
+                <label for="fyear">First Year</label>
+                <select id="fyear" name="fyear"></select>
+                <label for="lyear">Last Year</label>
+                <select id="lyear" name="lyear"></select>
+                <input class="subbutton" type="submit"value="Submit">
+                <p><span class="tab"></span>@Team Labook.</p>
+            </form>
+
+        </div>
+    
+ </body>
+ <script>var array = "<%= locals.country %>";</script>
+ <script>var comparray = "<%= locals.comparison %>";</script>
+ <script type = "text/javascript">  
+  (function countriesselect() {
+    var elm = document.getElementById('fcountry'),
+          df = document.createDocumentFragment();
+          var option = document.createElement('option');
+          option.value = '---';
+          option.appendChild(document.createTextNode('---'));
+          df.appendChild(option);
+          var arr = array.split(',');
+      for (var i = 0; i < arr.length; i++) {
+          var option = document.createElement('option');
+          option.value = arr[i];
+          option.appendChild(document.createTextNode(arr[i]));
+          df.appendChild(option);
+      }
+    elm.appendChild(df);
+}());
+  </script>
+  <script type = "text/javascript">  
+    (function compselect() {
+      var elm = document.getElementById('comp'),
+            df = document.createDocumentFragment();
+            var option = document.createElement('option');
+            option.value = '---';
+            option.appendChild(document.createTextNode('---'));
+            df.appendChild(option);
+            var arr = comparray.split(',');
+        for (var i = 0; i < arr.length; i++) {
+            var option = document.createElement('option');
+            option.value = arr[i];
+            option.appendChild(document.createTextNode(arr[i]));
+            df.appendChild(option);
+        }
+      elm.appendChild(df);
+  }());
+    </script>
+    <script type = "text/javascript">  
+      (function compselect() {
+        var elm = document.getElementById('scomp'),
+              df = document.createDocumentFragment();
+              var option = document.createElement('option');
+              option.value = '---';
+              option.appendChild(document.createTextNode('---'));
+              df.appendChild(option);
+              var arr = comparray.split(',');
+          for (var i = 0; i < arr.length; i++) {
+              var option = document.createElement('option');
+              option.value = arr[i];
+              option.appendChild(document.createTextNode(arr[i]));
+              df.appendChild(option);
+          }
+        elm.appendChild(df);
+    }());
+      </script>
+   <script type = "text/javascript">  
+    (function countryselect() {
+      var elm = document.getElementById('scountry'),
+            df = document.createDocumentFragment();
+            var option = document.createElement('option');
+            option.value = '---';
+            option.appendChild(document.createTextNode('---'));
+            df.appendChild(option);
+            var arr = array.split(',');
+        for (var i = 0; i < arr.length; i++) {
+            var option = document.createElement('option');
+            option.value = arr[i];
+            option.appendChild(document.createTextNode(arr[i]));
+            df.appendChild(option);
+        }
+      elm.appendChild(df);
+  }());
+    </script>
+ <script type = "text/javascript">  
+  (function yearselect() {
+    var elm = document.getElementById('fyear'),
+          df = document.createDocumentFragment();
+          var option = document.createElement('option');
+          option.value = '---';
+          option.appendChild(document.createTextNode('---'));
+          df.appendChild(option);
+      for (var i = 1960; i <= 2020; i++) {
+          var option = document.createElement('option');
+          option.value = i;
+          option.appendChild(document.createTextNode(i));
+          df.appendChild(option);
+      }
+    elm.appendChild(df);
+}());
+  </script>
+  <script type = "text/javascript">  
+    (function yearselect() {
+      var elm = document.getElementById('lyear'),
+          df = document.createDocumentFragment();
+          var option = document.createElement('option');
+          option.value = '---';
+          option.appendChild(document.createTextNode('---'));
+          df.appendChild(option);
+      for (var i = 1960; i <= 2020; i++) {
+          var option = document.createElement('option');
+          option.value = i;
+          option.appendChild(document.createTextNode(i));
+          df.appendChild(option);
+      }
+      elm.appendChild(df);
+  }());
+    </script>
+
+</html>

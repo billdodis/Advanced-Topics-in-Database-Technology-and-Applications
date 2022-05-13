@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Graph Type</title>
+    </head>
+
+    <style>
+        body {
+          font-family: Arial;
+        }
+        
+        input[type=text], select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: block;
+          border: 1px solid rgb(95, 36, 36);
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+          width: 100%;
+          background-color: #000000;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+          background-color: #424242;
+        }
+        
+        div.container {
+          border-radius: 5px;
+          background-color: #a9a9a9;
+          padding: 20px;
+        }
+        .tab {
+            display: inline-block;
+            margin-left: 1350px;
+        }
+        </style>
+    <body>
+
+        <h3>Data Selection</h3>
+        
+        <div class="container">
+
+            <form action="/" method="POST">
+                <label for="grapht">Graph Type</label>
+                <select id="grapht" name="grapht">
+                    <option value="---">---</option>
+                    <option value="timeline">Timeline</option>
+                    <option value="bar">Bar chart</option>
+                    <option value="scatter">Scatter plot</option>
+                  </select>
+
+                <input class="subbutton" type="submit"value="Submit">
+                <p><span class="tab"></span>@Team Labook.</p>
+            </form>
+
+        </div>
+    
+ </body>
+
+</html>
